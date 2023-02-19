@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { createTodo } from "../redux/todos";
+import { createTodo } from "../redux/todos_toolkit";
 
 function TodoInput() {
   const [text, setText] = useState("");
@@ -9,6 +9,7 @@ function TodoInput() {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(createTodo(text));
+    // console.log(createTodo(text));
   };
   return (
     <div>
