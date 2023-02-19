@@ -1,4 +1,4 @@
-import { createAction, nanoid } from "@reduxjs/toolkit";
+import { createAction, createReducer, nanoid } from "@reduxjs/toolkit";
 import produce from "immer";
 
 // src/redux/todos_toolkit.js
@@ -11,10 +11,28 @@ export const createTodo = createAction("todos/create", function prepare(text) {
     },
   };
 });
-
 //값이 하나여서 id값 그대로 쓰면 된다. 지우는 건 프리페어함수 필요없음
 export const removeTodo = createAction("todos/remove");
 export const toggleTodo = createAction("todos/toggle");
+
+export const TodoReducer = createReducer([], (builder) => {
+  builder
+    .addCase(createTodo, (state, action) => {
+      // immer 가 자동으로 적용되어 있다.
+      state.push(action.payload);
+    })
+    .addCase(toggleTodo, (state, action) => {
+      //   const todo = state[action.payload.index];
+      //   todo.completed = !todo.completed;
+      const todo = state.find((todo) => todo.id === action.payload);
+      todo.done = !todo.done;
+    })
+    .addCase(removeTodo, (state, action) => {
+      // 해당 아이디의 TODO의 INDEX값 구해서 splice로 원본에서 추출
+      const index = state.findIndex((todo) => todo.id === action.payload);
+      state.splice(index, 1);
+    });
+});
 
 // createAction : 액션의 타입과 액션 생성 함수를 동시에 만든다.
 //  => 함수를 실행하면 인자는 payload 라는 값으로, 타입은 자동으로 지정된다.
